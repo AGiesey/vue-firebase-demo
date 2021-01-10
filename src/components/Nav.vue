@@ -1,16 +1,16 @@
 <template>
   <nav class="navbar .navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="./index.html">Adam's Health</a>
+      <router-link to="/" class="navbar-brand">Adam's Health</router-link>
       <ul class="nav">
         <li class="nav-item">
-          <a class="nav-link" href="./bloodpressure.html">Blood Pressure</a>
+          <router-link to="Bloodpressure" class="nav-link">Blood Pressure</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="./weight.html">Weight</a>
+          <router-link to="Weight" class="nav-link">Weight</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="./login.html">Log in</a>
+          <router-link to="Login" class="nav-link">Log in</router-link>
         </li>
       </ul>
     </div>

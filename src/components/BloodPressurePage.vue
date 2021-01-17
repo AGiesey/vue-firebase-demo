@@ -1,6 +1,6 @@
 <template>
   <div class="container pt-2">
-    <div class="row">
+    <div class="row mb-5">
       <div class="col-sm">
         <h1>Blood Pressure</h1>
       </div>

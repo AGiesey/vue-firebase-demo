@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import { auth } from 'firebase';
 
 Vue.use(VueRouter)
 
@@ -14,15 +14,18 @@ const routes = [
     path: '/bloodpressure',
     name: 'Bloodpressure',
     linkExactActiveClass: 'active',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../components/BloodPressurePage.vue')
+    meta: {
+      requiresAuth: true
+    },
+    component: () => import('../components/BloodPressurePage.vue')
   },
   {
     path: '/weight',
     name: 'Weight',
     linkExactActiveClass: 'active',
+    meta: {
+      requiresAuth: true
+    },
     component: () => import('../components/WeightPage.vue')
   },
   {
@@ -37,6 +40,30 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.auth)) {
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+          next({
+              name: 'Login'
+          })
+      } else {
+          next()
+      }
+    })
+  } else {
+    next()
+  }
 })
+
+// router.beforeEach(async (to, from, next) => {
+//   if (to.name !== 'Login' && !await firebase.getCurrentUser()){
+//     next({ name: 'Login' });
+//   }else{
+//     next();
+//   }
+// })
 
 export default router

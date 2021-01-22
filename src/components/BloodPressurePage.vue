@@ -69,7 +69,22 @@
 </template>
 
 <script>
+import { db } from '../firebase';
+import { ref } from '@vue/composition-api';
+import { auth } from '../firebase';
+
 export default {
+    setup() {
+      const user = ref(null);
+      
+      const unsubscribe = auth.onAuthStateChanged(
+        firebaseUser => user.value = firebaseUser
+      );
+      return {
+        user,
+        unsubscribe,
+      }
+    },
     data: () => ({
       dateValue: '',
       systolicValue: 0,
@@ -77,12 +92,15 @@ export default {
       entries: []
     }),
     methods: {
-      addEntry: function() {
-        this.entries.push({
+      async addEntry() {
+        const { id: entryId } = await this.bloodPressureEntriesCollection.doc();
+
+        await this.bloodPressureEntriesCollection.doc(entryId).set({
           date: this.dateValue,
           systolic:parseInt(this.systolicValue),
           diastolic:parseInt(this.diastolicValue)
         });
+
         this.dateValue = '';
         this.systolicValue = 0;
         this.diastolicValue = 0;
@@ -100,7 +118,18 @@ export default {
         if (length < 1) return 0;
         if (length === 1 ) return this.entries[0].diastolic;
         return this.entries.reduce((a, b) => a.diastolic + b.diastolic) / length;
+      },
+      bloodPressureEntriesCollection() {
+        return db.doc(`health/MyR7sMSz1WW1FwoqsyUQ37h1rm63`).collection('bloodPressure');
       }
+    },
+    firestore() {
+      return {
+        entries: this.bloodPressureEntriesCollection.orderBy('date').limitToLast(10)
+      }
+    },
+    destroyed() {
+      this.unsubscribe;
     }
 }
 </script>
